@@ -1,5 +1,5 @@
 // ** Auth Endpoints
-const BaseUrl = "http://cashmind.test/api/v1"
+const BaseUrl = "http://cashmind-api.test/api/v1"
 export default {
   loginEndpoint: `${BaseUrl}/login`,
   registerEndpoint: `${BaseUrl}/signup`,

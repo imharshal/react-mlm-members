@@ -15,17 +15,18 @@ const PlanCard = ({ selectedUser }) => {
       </CardHeader>
       <CardBody>
         <Badge className='text-capitalize' color='light-primary'>
-          {selectedUser !== null ? selectedUser.currentPlan : 'Basic'}
+        {console.log(selectedUser)}
+          {selectedUser !== null ? selectedUser.plan : 'Basic'}
         </Badge>
         <ul className='list-unstyled my-1'>
           <li>
             <span className='align-middle'>5 Users</span>
           </li>
           <li className='my-25'>
-            <span className='align-middle'>10 GB Storage</span>
+            <span className='align-middle'>60 Rs/Day</span>
           </li>
           <li>
-            <span className='align-middle'>Basic Support</span>
+            <span className='align-middle'>Withdraw Limit Rs500</span>
           </li>
         </ul>
         <Button.Ripple className='text-center' color='primary' block>

@@ -7,7 +7,7 @@ const Plans = () => {
         <CardTitle>Create Awesome 🙌</CardTitle>
       </CardHeader>
       <CardBody>
-        <CardText>This is default page.</CardText>
+        <CardText>This is default page harshal.</CardText>
         <CardText>
           Chocolate sesame snaps pie carrot cake pastry pie lollipop muffin. Carrot cake dragée chupa chups jujubes.
           Macaroon liquorice cookie wafer tart marzipan bonbon. Gingerbread jelly-o dragée chocolate.

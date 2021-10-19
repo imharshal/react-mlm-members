@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { List } from 'react-feather'
+import { List, Award, Info } from 'react-feather'
 import { kFormatter } from '@utils'
 import Avatar from '@components/avatar'
 import Timeline from '@components/timeline'
@@ -12,7 +12,7 @@ import Sales from '@src/views/ui-elements/cards/analytics/Sales'
 import AvgSessions from '@src/views/ui-elements/cards/analytics/AvgSessions'
 import CardAppDesign from '@src/views/ui-elements/cards/advance/CardAppDesign'
 import SupportTracker from '@src/views/ui-elements/cards/analytics/SupportTracker'
-import { Row, Col, Card, CardHeader, CardTitle, CardBody, Media } from 'reactstrap'
+import { Row, Col, Card, CardHeader, CardTitle, CardBody, Media, CardText, Alert, Label } from 'reactstrap'
 import OrdersReceived from '@src/views/ui-elements/cards/statistics/OrdersReceived'
 import CardCongratulations from '@src/views/ui-elements/cards/advance/CardCongratulations'
 import StatsWithLineChart from '@components/widgets/stats/StatsWithLineChart'
@@ -26,42 +26,42 @@ const AnalyticsDashboard = () => {
   const { colors } = useContext(ThemeColors)
 
   const avatarGroupArr = [
-      {
-        title: 'Billy Hopkins',
-        img: require('@src/assets/images/portrait/small/avatar-s-9.jpg').default,
-        placement: 'bottom',
-        imgHeight: 33,
-        imgWidth: 33
-      },
-      {
-        title: 'Amy Carson',
-        img: require('@src/assets/images/portrait/small/avatar-s-6.jpg').default,
-        placement: 'bottom',
-        imgHeight: 33,
-        imgWidth: 33
-      },
-      {
-        title: 'Brandon Miles',
-        img: require('@src/assets/images/portrait/small/avatar-s-8.jpg').default,
-        placement: 'bottom',
-        imgHeight: 33,
-        imgWidth: 33
-      },
-      {
-        title: 'Daisy Weber',
-        img: require('@src/assets/images/portrait/small/avatar-s-7.jpg').default,
-        placement: 'bottom',
-        imgHeight: 33,
-        imgWidth: 33
-      },
-      {
-        title: 'Jenny Looper',
-        img: require('@src/assets/images/portrait/small/avatar-s-20.jpg').default,
-        placement: 'bottom',
-        imgHeight: 33,
-        imgWidth: 33
-      }
-    ],
+    {
+      title: 'Billy Hopkins',
+      img: require('@src/assets/images/portrait/small/avatar-s-9.jpg').default,
+      placement: 'bottom',
+      imgHeight: 33,
+      imgWidth: 33
+    },
+    {
+      title: 'Amy Carson',
+      img: require('@src/assets/images/portrait/small/avatar-s-6.jpg').default,
+      placement: 'bottom',
+      imgHeight: 33,
+      imgWidth: 33
+    },
+    {
+      title: 'Brandon Miles',
+      img: require('@src/assets/images/portrait/small/avatar-s-8.jpg').default,
+      placement: 'bottom',
+      imgHeight: 33,
+      imgWidth: 33
+    },
+    {
+      title: 'Daisy Weber',
+      img: require('@src/assets/images/portrait/small/avatar-s-7.jpg').default,
+      placement: 'bottom',
+      imgHeight: 33,
+      imgWidth: 33
+    },
+    {
+      title: 'Jenny Looper',
+      img: require('@src/assets/images/portrait/small/avatar-s-20.jpg').default,
+      placement: 'bottom',
+      imgHeight: 33,
+      imgWidth: 33
+    }
+  ],
     data = [
       {
         title: '12 Invoices have been paid',
@@ -113,14 +113,29 @@ const AnalyticsDashboard = () => {
   return (
     <div id='dashboard-analytics'>
       <Row className='match-height'>
+        <Col lg='12' sm='12'>
+          {<Alert color='info'>
+            <div className='alert-body'>
+
+              <h4 className='text-secondary'> <Info size={20} />{' '} Important Notice / Announcements</h4> <br />
+              { }
+              <ul>
+                <li className="ml-2 text-info ">We are launching new services by 20 Oct</li>
+              </ul>
+            </div>
+          </Alert>}
+        </Col>
+        {/* <Alert tag={Col} color="info">HEllo</Alert> */}
+      </Row>
+      <Row className='match-height'>
         <Col lg='6' sm='12'>
           <CardCongratulations />
         </Col>
         <Col lg='3' sm='6'>
           {/* <MembersJoined  /> */}
-          
-          <SubscribersGained tag="a" kFormatter={kFormatter} onClick ={() => history.push('/members')}/>
-          
+
+          <SubscribersGained tag="a" kFormatter={kFormatter} onClick={() => history.push('/members')} />
+
         </Col>
         <Col lg='3' sm='6'>
           <OrdersReceived kFormatter={kFormatter} warning={colors.warning.main} />
@@ -134,7 +149,7 @@ const AnalyticsDashboard = () => {
           <SupportTracker primary={colors.primary.main} danger={colors.danger.main} />
         </Col>
       </Row>
-      <Row className='match-height'>
+      {/* <Row className='match-height'>
         <Col lg='4' xs='12'>
           <Card className='card-user-timeline'>
             <CardHeader>
@@ -154,7 +169,7 @@ const AnalyticsDashboard = () => {
         <Col lg='4' md='6' xs='12'>
           <CardAppDesign />
         </Col>
-      </Row>
+      </Row> */}
       <Row className='match-height'>
         <Col xs='12'>
           {/* <InvoiceList /> */}

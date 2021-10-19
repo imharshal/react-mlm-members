@@ -16,10 +16,10 @@ const SignupSchema = yup.object().shape({
   // })),
   // address: yup.string().required('Address is required'),
   pincode: yup.string().required("Pin code is required").min(7, 'Invalid Pincode')
-  // 'Address.city': yup.string().required("City is required").nullable(),
-  // 'Address.district': yup.string().required("District is required").nullable(),
-  // 'Address.state': yup.string().required("State is required").nullable(),
-  // 'Address.country': yup.string().required("Country is required").nullable()
+  // city: yup.string().required("City is required"),
+  // district: yup.string().required("District is required"),
+  // state: yup.string().required("State is required").nullable(),
+  // country: yup.string().required("Country is required").nullable()
 })
 
 
@@ -39,20 +39,29 @@ const Address = ({ updateData, Data, stepper, type }) => {
       }
 
       if (pincode.length === 6) {
-        const results = await axios(`https://api.postalpincode.in/pincode/${pincode}`)
-        const data = results.data[0].PostOffice
-        if (data) addr = {
-          pincode: data[1].Pincode,
-          city: data[1].Block,
-          town: data[1].town,
-          district: data[1].District,
-          state: data[1].State,
-          country: data[1].Country
-        }
-        if (data === null) setinvalidPincode(true)
-        else setinvalidPincode(false)
+
+        // fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+        //   .then(response => response.json())
+        //   .then(data => console.log(data))
+
+        fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+          .then(response => response.json())
+          .then(results => {
+            const data = results[0].PostOffice
+            if (data) addr = {
+              pincode: data[1].Pincode,
+              city: data[1].Block,
+              town: data[1].town,
+              district: data[1].District,
+              state: data[1].State,
+              country: data[1].Country
+            }
+            if (data === null) setinvalidPincode(true)
+            else setinvalidPincode(false)
+
+            setValue('Address', addr)
+          })
       }
-      setValue('Address', addr)
     } catch (e) {
       console.log(e)
     }

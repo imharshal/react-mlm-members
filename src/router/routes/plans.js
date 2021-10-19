@@ -10,8 +10,10 @@ const PlansRoutes = [
     },
     {
         path: '/plans/active',
-        component: lazy(() => import('../../views/plans/ActivePlans'))
+        component: lazy(() => import('../../views/DefaultPage'))
+
+        // component: lazy(() => import('../../views/plans/ActivePlans'))
     }
 ]
 
-export { PlansRoutes}
+export { PlansRoutes }

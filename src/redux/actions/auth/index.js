@@ -2,7 +2,6 @@
 import useJwt from '@src/auth/jwt/useJwt'
 
 const config = useJwt.jwtConfig
-
 // ** Handle User Login
 export const handleLogin = data => {
   return dispatch => {
@@ -16,8 +15,8 @@ export const handleLogin = data => {
 
     // ** Add to user, accessToken & refreshToken to localStorage
     localStorage.setItem('userData', JSON.stringify(data))
-    localStorage.setItem(config.storageTokenKeyName, JSON.stringify(data.accessToken))
-    localStorage.setItem(config.storageRefreshTokenKeyName, JSON.stringify(data.refreshToken))
+    localStorage.setItem(config.storageTokenKeyName, data.accessToken)
+    localStorage.setItem(config.storageRefreshTokenKeyName, JSON.stringify(JSON.stringify(data.refreshToken)))
   }
 }
 

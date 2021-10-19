@@ -1,20 +1,139 @@
+import { useState, useContext, useEffect, Fragment } from 'react'
+import classnames from 'classnames'
+import Avatar from '@components/avatar'
 import { useSkin } from '@hooks/useSkin'
-import { Link, Redirect } from 'react-router-dom'
-import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
+import useJwt from '@src/auth/jwt/useJwt'
+import { useDispatch } from 'react-redux'
+import { useForm, Controller, set } from 'react-hook-form'
+import { toast, Slide } from 'react-toastify'
+import { handleLogin } from '@store/actions/auth'
+import { AbilityContext } from '@src/utility/context/Can'
+import { Link, useHistory } from 'react-router-dom'
 import InputPasswordToggle from '@components/input-password-toggle'
-import { Row, Col, CardTitle, CardText, Form, FormGroup, Label, Input, CustomInput, Button } from 'reactstrap'
+import { getHomeRouteForLoggedInUser, isObjEmpty } from '@utils'
+import { Facebook, Twitter, Mail, GitHub, HelpCircle, Coffee, AlertCircle } from 'react-feather'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+// import Spinner from '../../@core/components/spinner/Fallback-spinner'
+
+import {
+  Alert,
+  Row,
+  Col,
+  CardTitle,
+  CardText,
+  Form,
+  Input,
+  FormGroup,
+  Label,
+  CustomInput,
+  Button,
+  UncontrolledTooltip,
+  FormFeedback,
+  Spinner
+} from 'reactstrap'
+
+import Swal from 'sweetalert2'
+
+
 import '@styles/base/pages/page-auth.scss'
 
-const Login = () => {
-  const [skin, setSkin] = useSkin()
+const ToastContent = ({ name, role }) => (
+  <Fragment>
+    <div className='toastify-header'>
+      <div className='title-wrapper'>
+        <Avatar size='sm' color='success' icon={<Coffee size={12} />} />
+        <h6 className='toast-title font-weight-bold'>Welcome, {name.split(' ')[0]}</h6>
+      </div>
+    </div>
+    <div className='toastify-body'>
+      <span>You have successfully logged in.</span>
+    </div>
+  </Fragment>
+)
 
+const ErrorToast = () => (
+  <Fragment>
+    <div className='toastify-header'>
+      <div className='title-wrapper'>
+        <Avatar size='sm' color='danger' icon={<AlertCircle size={12} />} />
+        <h6 className='toast-title font-weight-bold'>Login failed</h6>
+      </div>
+    </div>
+    <div className='toastify-body'>
+      <span>Invalid username or password</span>
+    </div>
+  </Fragment>
+)
+
+const LoginSchema = yup.object().shape({
+  username: yup.string().required("Username is required"),
+  password: yup.string().required("Password is required")
+})
+
+const Login = props => {
+
+  const { register, handleSubmit, control, setValue, getValues, formState: { errors }, trigger } = useForm({
+    mode: "onBlur",
+    resolver: yupResolver(LoginSchema)
+  })
+
+  const [skin, setSkin] = useSkin()
+  const ability = useContext(AbilityContext)
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const [Loading, setLoading] = useState(false)
+
+  // const { register, errors, handleSubmit } = useForm()
   const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
     source = require(`@src/assets/images/pages/${illustration}`).default
+
+  // useEffect(() => {
+
+  //   console.log(username)
+  //   console.log(password)
+  // }, [])
+
+  const onSubmit = data => {
+    trigger()
+    setLoading(true)
+    if (isObjEmpty(errors)) {
+      useJwt
+        .login({ username: data.username, password: data.password })
+        .then(res => {
+          setLoading(false)
+          console.log(res)
+          if (!res.data.success) Swal.fire('Login failed!', 'Invalid username or password', 'error')
+          else {
+            const data = { ...res.data[0].user, accessToken: res.data[0].token, refreshToken: res.data.refreshToken }
+            console.log(res.data)
+            dispatch(handleLogin(data))
+            // data.push({ role: "admin" })
+            // ability.update({ action: "manage", subject: "all" })
+            // history.push(getHomeRouteForLoggedInUser("admin"))
+            // useJwt.setAcc
+            history.push('/home')
+            toast.success(
+              <ToastContent name={data.fullname || data.username || 'John Doe'} />,
+              { transition: Slide, hideProgressBar: true, autoClose: 2000 }
+            )
+          }
+        })
+        .catch(err => {
+          // Swal.fire('Login failed!', 'Invalid username or password', 'error')
+          // toast.danger(<ErrorToast />, { transition: Slide, hideProgressBar: true, autoClose: 3000 })
+          console.log(err)
+        })
+    }
+  }
 
   return (
     <div className='auth-wrapper auth-v2'>
       <Row className='auth-inner m-0'>
-        <Link className='brand-logo' to='/'>
+        <Link className='brand-logo' to='/' onClick={e => e.preventDefault()}>
           <svg viewBox='0 0 139 95' version='1.1' height='28'>
             <defs>
               <linearGradient x1='100%' y1='10.5120544%' x2='50%' y2='89.4879456%' id='linearGradient-1'>
@@ -72,60 +191,70 @@ const Login = () => {
         </Col>
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
           <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
-            <CardTitle tag='h2' className='font-weight-bold mb-1'>
+
+            <CardTitle tag='h2' className='font-weight-bold mb-1 mt-5'>
               Welcome to Cashmind! 👋
             </CardTitle>
-            <div className='card card-body'>
-            {/* <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText> */}
-            <Form className='auth-login-form mt-2' onSubmit={e => e.preventDefault()}>
+            <Alert color="primary">
+              <CardText className='mb-2 alert-body'>Please sign-in to your account and start the adventure</CardText>
+            </Alert>
+
+            <Form className='auth-login-form mt-2' onSubmit={handleSubmit(onSubmit)}>
               <FormGroup>
                 <Label className='form-label' for='login-email'>
                   Username
                 </Label>
-                <Input type='email' id='login-email' placeholder='username' autoFocus />
+                <Input
+                  name="username"
+                  type='text'
+                  id={`login-username`}
+                  className={classnames({ 'is-invalid': errors['username'] })}
+                  {...register('username')}
+                  placeholder=''
+                // onChange={e => setUsername(e.target.value)}
+                />
+                {errors.username && <FormFeedback>{errors.username.message}</FormFeedback>}
+
               </FormGroup>
               <FormGroup>
                 <div className='d-flex justify-content-between'>
                   <Label className='form-label' for='login-password'>
                     Password
                   </Label>
-                  <Link to='/'>
+                  <Link to='/forgot-password'>
                     <small>Forgot Password?</small>
                   </Link>
                 </div>
-                <InputPasswordToggle className='input-group-merge' id='login-password' />
+
+                <Input
+                  name="password"
+                  type='password'
+                  id={`login-password`}
+                  className={classnames({ 'is-invalid': errors['password'] })}
+                  {...register('password')}
+                  placeholder=''
+                // onChange={e => setPassword(e.target.value)}
+                />
+
+                {errors.password && <FormFeedback>{errors.password.message}</FormFeedback>}
               </FormGroup>
               <FormGroup>
                 <CustomInput type='checkbox' className='custom-control-Primary' id='remember-me' label='Remember Me' />
               </FormGroup>
-              <Button.Ripple tag={Link} to='/' color='primary' block>
-                Sign in
+              <Button.Ripple type='submit' color='primary' block disabled={Loading}>
+                {Loading ? <>
+                  <Spinner color='white' size='sm' type='grow' />
+                  <span className='ml-50'>Signing in...</span>
+                </> : 'Sign in'}
               </Button.Ripple>
             </Form>
-            </div>
             <p className='text-center mt-2'>
               <span className='mr-25'>New on our platform?</span>
               <Link to='/signup'>
                 <span>Create an account</span>
               </Link>
             </p>
-            {/* <div className='divider my-2'>
-              <div className='divider-text'>or</div>
-            </div>
-            <div className='auth-footer-btn d-flex justify-content-center'>
-              <Button.Ripple color='facebook'>
-                <Facebook size={14} />
-              </Button.Ripple>
-              <Button.Ripple color='twitter'>
-                <Twitter size={14} />
-              </Button.Ripple>
-              <Button.Ripple color='google'>
-                <Mail size={14} />
-              </Button.Ripple>
-              <Button.Ripple className='mr-0' color='github'>
-                <GitHub size={14} />
-              </Button.Ripple>
-            </div> */}
+           
           </Col>
         </Col>
       </Row>

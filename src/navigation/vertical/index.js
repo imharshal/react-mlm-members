@@ -18,7 +18,7 @@ export default [
     id: 'myteam',
     title: 'My Team',
     icon: <Users size={20} />,
-    children:[
+    children: [
       {
         id: 'my-team-list',
         title: 'Team Details',
@@ -37,41 +37,43 @@ export default [
     id: 'plans',
     title: 'My Plans',
     icon: <Layers size={20} />,
-    children:[
-      {
-        id: 'all-plan',
-        title: 'Explore Plans',
-        icon: <Eye size={20} />,
-        navLink: '/plans'
-      },
-      {
-        id: 'active-plan',
-        title: 'Active Plan',
-        icon: <Activity size={20} />,
-        navLink: '/plans/active'
-      }
-    ]
-   
+    navLink: '/plans'
+
+    // children:[
+    //   {
+    //     id: 'all-plan',
+    //     title: 'Explore Plans',
+    //     icon: <Eye size={20} />,
+    //     navLink: '/plans'
+    //   },
+    //   {
+    //     id: 'active-plan',
+    //     title: 'Active Plan',
+    //     icon: <Activity size={20} />,
+    //     navLink: '/plans/active'
+    //   }
+    // ]
+
   },
   {
     id: 'withdraw',
     title: 'Withdraw',
     icon: <DollarSign size={20} />,
-    children:[
+    children: [
       {
-        id: 'withdraw-funds',
+        id: 'withdrawFunds',
         title: 'Withdraw Funds',
         icon: <PlayCircle size={20} />,
         navLink: '/withdraw-funds'
       },
       {
-        id: 'payout',
+        id: 'withdrawHistory',
         title: 'Withdrawal History',
         icon: <PlayCircle size={20} />,
         navLink: '/withdrawal-history'
       }
     ]
-    
+
   },
   {
     id: 'income-reports',

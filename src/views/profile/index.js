@@ -17,6 +17,8 @@ import PermissionsTable from './PermissionsTable'
 // ** Styles
 import '@styles/react/apps/app-users.scss'
 import axios from 'axios'
+import api from '@configs/apiConfig'
+
 // const selectedUser =
 // {
 //   id: 1,
@@ -40,24 +42,25 @@ const UserView = props => {
   //   { id } = useParams()
 
   // ** Get suer on mount
-  const [user, setUser] = useState([])
+  const [user, setUser] = useState()
   useEffect(() => {
     axios
-      .get('http://cashmind-api.test/api/v1/members')
-      .then(response => console.log(JSON.stringify(response.data.data)))
-    // setUser(response.data.user)
+      .get(api.routes.get.profile, api.auth)
+      .then(response => setUser(response.data.user))
+    // (response.data.user)
     // setUser(selectedUser)
-    console.log()
   }, [])
-
+  useEffect(() => {
+    console.log(user)
+  }, [user])
   return (
     <div className='app-user-view'>
       <Row>
         <Col xl='9' lg='8' md='7'>
-          {/* <UserInfoCard selectedUser={user} /> */}
+          {user && <UserInfoCard selectedUser={user} />}
         </Col>
         <Col xl='3' lg='4' md='5'>
-          <PlanCard selectedUser={user} />
+          {user && <PlanCard selectedUser={user} />}
         </Col>
       </Row>
       <Row>

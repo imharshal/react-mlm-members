@@ -21,7 +21,7 @@ import { updateAction, clearAction } from "./updateAction"
 
 const SignupSchema = yup.object().shape({
 	firstName: yup.string().required("First name is required"),
-	middleName: yup.string().required("Middle name is required"),
+	// middleName: yup.string().required("Middle name is required"),
 	lastName: yup.string().required("Last name is required"),
 	dob: yup.date().required("Date of Birth is required").nullable(),
 	gender: yup.object().required("Gender is required").nullable(),
@@ -56,7 +56,7 @@ const PersonalInfo = ({ updateData, resetData, Data, stepper, type }) => {
 		const dob = data.dob
 		const dateOfBirth = `${dob.getDate()}-${dob.getMonth() + 1}-${dob.getFullYear()}`
 		const personalData = {
-			fullname: `${data.firstName} ${data.middleName} ${data.lastName}`,
+			fullname: `${data.firstName} ${data.lastName}`,
 			dob: dateOfBirth,
 			gender: data.gender.value,
 			email: data.email,
@@ -79,7 +79,7 @@ const PersonalInfo = ({ updateData, resetData, Data, stepper, type }) => {
 			</div>
 			<Form onSubmit={handleSubmit(onSubmit)} className="">
 				<Row>
-					<FormGroup tag={Col} md='4'>
+					<FormGroup tag={Col} md='6'>
 						<Label className='form-label' for={`first-name-${type}`}>
 							First Name
 						</Label>
@@ -93,7 +93,7 @@ const PersonalInfo = ({ updateData, resetData, Data, stepper, type }) => {
 						/>
 						{errors.firstName && <FormFeedback>{errors.firstName.message}</FormFeedback>}
 					</FormGroup>
-					<FormGroup tag={Col} md='4'>
+					{/* <FormGroup tag={Col} md='4'>
 						<Label className='form-label' for={`middle-name-${type}`}>
 							Middle Name
 						</Label>
@@ -106,8 +106,8 @@ const PersonalInfo = ({ updateData, resetData, Data, stepper, type }) => {
 							className={classnames({ 'is-invalid': errors['middleName'] })}
 						/>
 						{errors.middleName && <FormFeedback>{errors.middleName.message}</FormFeedback>}
-					</FormGroup>
-					<FormGroup tag={Col} md='4'>
+					</FormGroup> */}
+					<FormGroup tag={Col} md='6'>
 						<Label className='form-label' for={`last-name-${type}`}>
 							Last Name
 						</Label>

@@ -6,7 +6,8 @@ const IncomeReportRoutes = [
     //authentication routes
     {
         path: '/income-reports',
-        component: lazy(() => import('../../views/income-reports/income-report'))
+        component: lazy(() => import('../../views/DefaultPage'))
+        // component: lazy(() => import('../../views/income-reports/income-report'))
     }
     // {
     //     path: '/plans/active',

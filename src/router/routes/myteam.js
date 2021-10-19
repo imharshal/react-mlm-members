@@ -6,7 +6,9 @@ const MyteamRoutes = [
     //authentication routes
     {
         path: '/team/details',
-        component: lazy(() => import('../../views/team/Details'))
+        component: lazy(() => import('../../views/DefaultPage'))
+
+        // component: lazy(() => import('../../views/team/Details'))
     },
     {
         path: '/team/matrix',
@@ -14,4 +16,4 @@ const MyteamRoutes = [
     }
 ]
 
-export { MyteamRoutes}
+export { MyteamRoutes }

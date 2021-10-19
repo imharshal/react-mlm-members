@@ -22,7 +22,7 @@ const MyAlert = withReactContent(Swal)
 
 const SignupSchema = yup.object().shape({
     lead: yup.string().required("Enter valid referrer or enter admin ").matches(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm, 'This is not a valid cashmind id'),
-    username: yup.string().required("It is required to create cashmind id").matches(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm, 'This id does\'t meet our criteria'),
+    username: yup.string().required("It is required to create cashmind id").min(5, "Minimum 5 characters required.").matches(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm, 'This id does\'t meet our criteria'),
     // password: yup.string().required("Password is required"),
     // confirmPassword: yup.object().required().oneOf([yup.ref(password), null], 'Passwords must match')
 
@@ -40,36 +40,47 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
         resolver: yupResolver(SignupSchema)
     })
     const [Lead, setLead] = useState([])
+    const [InvalidLead, setInvalidLead] = useState(false)
 
     const [FlagSubmitted, setFlagSubmitted] = useState(0)
 
-    const [LeadList, setLeadList] = useState([{ username: '', fullname: '' }])
-
+    const [LeadList, setLeadList] = useState([])
     const [avail, setAvail] = useState([{ taken: true, avail: false, invalid: false }])
+    const [ServerErrors, setServerErrors] = useState([])
+
+    const handleLeadBlur = () => {
+        try {
+            const valid = LeadList.filter(x => x.username.toLowerCase() === (Lead.lead.toLowerCase()))
+            console.log(valid)
+            if (!valid || Lead.name === null) setInvalidLead(true)
+            else setInvalidLead(false)
+        } catch (e) {
+            setInvalidLead(true)
+            console.log(e)
+        }
+
+    }
 
     useEffect(() => {
         axios
             .get(api.routes.get.member_list)
-            .then(response => setLeadList(response.data))
-        // console.log(LeadList)
-    }, [LeadList])
+            .then(response => {
+                // console.log(response.data.data.length)
+                response.data.data.push({ id: 0, username: "admin", fullname: "Avinash Shete" })
+                // if (response.data.data.length === 0) setLeadList([{ username: "admin", fullname: "Avinash Shete" }])
+                // console.log(response.data.data)
+                setLeadList(response.data.data)
+            })
+    }, [])
 
     // TODO
     const handleAvailability = (e) => {
-        try {
-            axios.post(api.routes.get.member_list, Data)
-                .then(response => {
-                    // console.log(response)
-                    if (response.success === "true") {
-                        const selected = response.data.filter(x => x.username === e.target.value)
-                        // console.log(selected.length)
-                        if (selected.length > 0) setAvail({ taken: true })
-                        else setAvail({ avail: true })
-                    } else { alert('Something wents wrong') }
-                }).catch(error => {
-                    alert('Please check your internet connection')
-                })
-        } catch (e) { alert('Please check your internet connection') }
+        const selected = LeadList.filter(x => x.username.toLowerCase() === (e.target.value.toLowerCase()))
+        // console.log(selected)
+        if (e.target.value === '') setAvail({ invalid: true })
+        else if (selected.length > 0) setAvail({ taken: true })
+        else setAvail({ avail: true })
+        console.log(avail)
     }
     // const handleChangeUserName = (e) => {
     //     if (e.target.value.match("^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$") !== null) {
@@ -87,13 +98,14 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                 confirmButton: 'btn btn-primary'
             },
             buttonsStyling: false
-        }).then(() => { //window.location = "/login"
+        }).then(() => {
+            window.location = "/login"
         })
     }
-    const handleError = () => {
+    const handleError = (error) => {
         return MyAlert.fire({
             title: 'Failed to Register',
-            text: 'Please try again',
+            text: null ? 'Please try again' : error.email || error.username,
             icon: 'error',
             showCancelButton: true,
             showConfirmButton: true,
@@ -105,22 +117,23 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
             buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post(api.routes.post.signup, Data)
-                    .then(response => {
-                        console.log(response)
-                        if (response.status === 200) handleSuccess()
-                        else handleError()
-                    })
+                setFlagSubmitted(0)
+                // axios.post(api.routes.post.signup, Data)
+                //     .then(response => {
+                //         console.log(response)
+                //         if (response.status === 200 && response.data.status === true) handleSuccess()
+                //         else handleError()
+                //     })
             }
             if (result.isDismissed || result.isDenied) {
                 location.reload()
             }
         })
     }
-    const handleResubmit = () => {
+    const handleResubmit = (error) => {
         return MyAlert.fire({
-            title: 'Resubmission is not allowed',
-            text: '',
+            title: 'Error',
+            text: error.email || error.username,
             icon: 'error',
             confirmButtonText: 'OK',
             customClass: {
@@ -132,50 +145,52 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
         })
     }
 
-    const signup = () => {
+    const signup = async () => {
         setFlagSubmitted(FlagSubmitted + 1)
         try {
-
-            axios.post(api.routes.post.signup, Data)
+            console.log(Data)
+            await axios.post(api.routes.post.signup, Data)
                 .then(response => {
-                    console.log(response)
-                    if (response.status >= 200 <= 250) handleSuccess()
-                    else handleError()
+                    console.log(response.data.error)
+                    if (response.data.success === true) handleSuccess()
+                    else if (response.data.error) handleError(response.data.error || null)
+                    // else handleError(null)
+
                 }).catch(error => {
                     console.log(error)
-                    handleError()
+                    // handleError()
                 })
         } catch (e) { handleError() }
         // resetData()
     }
 
-    useEffect(() => {
-        console.log(Lead)
-    }, [Lead])
 
     useEffect(() => {
-        console.log(Data)
+        // console.log(Data)
         setFlagSubmitted(0)
         if (!FlagSubmitted && Data.username) signup()
     }, [Data])
 
     const onSubmit = (data) => {
-        console.log(data.lead)
+        // console.log(data.lead)
         trigger()
-        if (FlagSubmitted === 0) {
-            const LoginDetails = {
-                password: data.confirmPassword,
-                username: data.username,
-                lead: Lead.username,
-                lead_name: Lead.name
-            }
-            //Check if username is available
-            if (avail.avail === true) {
-                if (isObjEmpty(errors)) {
-                    updateData(LoginDetails)
-                }
+        // if (FlagSubmitted === 0) {
+        const random = Math.floor(Math.random() * 6)
+        const LoginDetails = {
+            password: data.confirmPassword,
+            username: data.username,
+            lead: Lead.lead,
+            lead_id: Lead.id,
+            lead_name: Lead.name,
+            avatar: random
+        }
+        //Check if username is available
+        if (avail.avail === true) {
+            if (isObjEmpty(errors)) {
+                updateData(LoginDetails)
             }
         }
+        // }
         if (FlagSubmitted && Data.LoginDetails) handleResubmit()
 
     }
@@ -191,6 +206,11 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                     <FormGroup tag={Col} md='12'>
                         <Label className='form-label' for={`lead-${type}`}>
                             Who referred you?
+                            <span className='ml-1 text-primary form-control-sm'>
+                                <Info size={15} />{' '}
+                                Search username and select from dropdown
+                            </span>
+
                         </Label>
 
                         <Controller
@@ -198,17 +218,13 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                             control={control}
                             render={({ field }) => (
                                 <AutoComplete
-                                    // onChange={(event, value) => handleLeadChange(event, value)} // prints the selected value
-                                    // name="lead"
+                                    onBlur={handleLeadBlur}
                                     {...field}
                                     id={`lead-${type}`}
-                                    // onInput={(e) => console.log(e.target.value)}
                                     suggestions={LeadList}
-                                    className='form-control'
+                                    className={classnames('form-control', { 'is-invalid': InvalidLead })}
                                     filterKey='username'
                                     placeholder="Cashmind username"
-                                    // {...register('lead')}
-
                                     customRender={(
                                         suggestion,
                                         i,
@@ -224,18 +240,20 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                                             key={i}
                                             onMouseEnter={() => onSuggestionItemHover(filteredData.indexOf(suggestion))}
                                             onClick={e => {
+                                                console.log(e.target)
                                                 onSuggestionItemClick(null, e)
-                                                setLead({ lead: e.target.ariaSelected, name: e.target.ariaLabel })
+                                                setLead({ id: e.target.ariaLevel, lead: e.target.ariaSelected, name: e.target.ariaLabel })
                                             }}
                                             aria-selected={suggestion.username}
-                                            aria-label={suggestion.name}
+                                            aria-label={suggestion.fullname}
+                                            aria-level={suggestion.id}
                                         >
-                                            <Row>
-                                                <Col md={4} aria-selected={suggestion.username} aria-label={suggestion.name}>
-                                                    <span className="badge badge-primary" aria-selected={suggestion.username} aria-label={suggestion.name}>{`@ ${suggestion.username}`}</span>
+                                            <Row aria-selected={suggestion.username} aria-label={suggestion.fullname} aria-level={suggestion.id}>
+                                                <Col md={4} aria-selected={suggestion.username} aria-label={suggestion.fullname} aria-level={suggestion.id}>
+                                                    <span className="badge badge-primary" aria-selected={suggestion.username} aria-label={suggestion.fullname} aria-level={suggestion.id}>{`@ ${suggestion.username}`}</span>
                                                 </Col>
-                                                <Col md={8} className="mt-md-0 mt-1" aria-selected={suggestion.username} aria-label={suggestion.name}>
-                                                    <span className="" aria-selected={suggestion.username} aria-label={suggestion.name}>{suggestion.name}</span>
+                                                <Col md={8} className="mt-md-0 mt-1" aria-selected={suggestion.username} aria-label={suggestion.fullname} aria-level={suggestion.id}>
+                                                    <span className=" text-primary font-weight-bolder" aria-selected={suggestion.username} aria-label={suggestion.fullname} aria-level={suggestion.id}>{suggestion.fullname}</span>
                                                 </Col>{/* <hr className="m-0 p-0"/> */}
                                             </Row>
                                         </li>
@@ -244,8 +262,16 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                             )}
                         />
                         {errors.lead && <Label className="text-danger">{errors.lead.message}</Label>}
+                        {InvalidLead && !errors.lead && <Label className="text-danger">Enter valid referrer or enter admin</Label>}
                     </FormGroup>
                 </Row>
+                {Lead.lead && <Alert color='info'>
+                    <div className='alert-body'>
+                        <Info size={15} />{' '}
+                        <Label className='text-info'>Your lead is</Label> <br />
+                        <span className="ml-2 text-secondary font-weight-bolder">{Lead.name}</span>
+                    </div>
+                </Alert>}
                 <Alert color='primary'>
                     <div className='alert-body'>
                         <Info size={15} />{' '}
@@ -263,31 +289,29 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                         <Label className='form-label' for={`username-${type}`}>
                             Create your cashmind user id
                         </Label>
-                        <Input
+                        {/* <Input
                             name="username"
+                            onBlur={(e) => handleAvailability(e)}
                             {...register('username')}
-                            onBlur={handleAvailability}
-                            // value={UserName}
-                            // onChange={handleChangeUserName}
                             type='text'
                             id={`username-${type}`}
                             placeholder=''
                             className={classnames({ 'is-invalid': errors['username'] }, { 'is-invalid': avail.taken || avail.invalid })}
-                        />
-                        {/* <Controller
+                        /> */}
+                        <Controller
                             name="username"
                             control={control}
                             render={({ field }) => (
                                 <Input
-                                    // {...field}
-                                    onBlur={handleAvailability}
+                                    className={classnames({ 'is-invalid': errors['username'] }, { 'is-invalid': avail.taken || avail.invalid })}
+                                    {...field}
+                                    onBlur={e => field.onBlur(handleAvailability(e))}
                                     type='text'
                                     id={`username-${type}`}
                                     placeholder=''
-                                    className={classnames({ 'is-invalid': errors['username'] })}
                                 />
                             )}
-                        /> */}
+                        />
                         {errors.username && <FormFeedback>{errors.username.message}</FormFeedback>}
                         {avail.taken && !errors.username &&
                             <span className='text-danger'>
@@ -363,7 +387,8 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                         <ArrowLeft size={14} className='align-middle mr-sm-25 mr-0'></ArrowLeft>
                         <span className='align-middle d-sm-inline-block d-none'>Avail</span>
                     </Button.Ripple> */}
-                    <Button.Ripple type='submit' color='primary' disabled={Boolean(FlagSubmitted)} className='btn-next'>
+                    {/* disabled={Boolean(FlagSubmitted)} */}
+                    <Button.Ripple type='submit' color='primary' className='btn-next'>
                         <span className='align-middle d-sm-inline-block d-none'>Next</span>
                         <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
                     </Button.Ripple>
