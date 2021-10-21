@@ -1,6 +1,7 @@
 import axios from 'axios'
 import jwtDefaultConfig from './jwtDefaultConfig'
-
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*'
 export default class JwtService {
   // ** jwtConfig <= Will be used by this service
   jwtConfig = { ...jwtDefaultConfig }

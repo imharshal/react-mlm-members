@@ -14,19 +14,22 @@ const PlanCard = ({ selectedUser }) => {
         </UncontrolledTooltip>
       </CardHeader>
       <CardBody>
-        <Badge className='text-capitalize' color='light-primary'>
-        {console.log(selectedUser)}
+        {/* <Badge className='text-capitalize' color='light-primary'>
+          {console.log(selectedUser)}
           {selectedUser !== null ? selectedUser.plan : 'Basic'}
-        </Badge>
+        </Badge> */}
         <ul className='list-unstyled my-1'>
           <li>
-            <span className='align-middle'>5 Users</span>
+            <span className='h4 align-middle font-weight-bold'>Rs. 1000</span>
           </li>
           <li className='my-25'>
-            <span className='align-middle'>60 Rs/Day</span>
+            <span className='align-middle'><strong>Joining:</strong> June 21, 2021</span>
+          </li>
+          <li className='my-25'>
+            <span className='align-middle'><strong>Daily Income:</strong> 25 Rs/Day</span>
           </li>
           <li>
-            <span className='align-middle'>Withdraw Limit Rs500</span>
+            <span className='align-middle'><strong>Withdraw Limit:</strong>Rs 500</span>
           </li>
         </ul>
         <Button.Ripple className='text-center' color='primary' block>

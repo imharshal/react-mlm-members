@@ -9,6 +9,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Cleave from 'cleave.js/react'
 import axios from 'axios'
+import Swal from 'sweetalert2'
+
 
 const SignupSchema = yup.object().shape({
   // Address: yup.array().of(yup.object().shape({
@@ -64,6 +66,8 @@ const Address = ({ updateData, Data, stepper, type }) => {
       }
     } catch (e) {
       console.log(e)
+      Swal.fire('Network issue', 'Kindly check your network connection', 'error')
+
     }
   }
 

@@ -12,6 +12,9 @@ import { WithdrawRoutes } from "./withdraw"
 import { IncomeReportRoutes } from "./income-reports"
 import { SidebarRoutes } from './sidebar'
 import { MyteamRoutes } from './myteam'
+import { BankDetailsRoute } from './bank-details'
+import { AddFundsRoutes } from './funds'
+import { TaskRoutes } from './tasks'
 
 // ** Merge Routes
 const Routes = [
@@ -33,6 +36,14 @@ const Routes = [
     }
   },
   {
+    path: '/ref/:username',
+    component: lazy(() => import('../../views/signup')),
+    layout: 'BlankLayout',
+    meta: {
+      authRoute: true
+    }
+  },
+  {
     path: '/error',
     component: lazy(() => import('../../views/misc/Error')),
     layout: 'BlankLayout'
@@ -42,7 +53,10 @@ const Routes = [
   ...ProfileRoutes,
   ...MyteamRoutes,
   ...WithdrawRoutes,
-  ...IncomeReportRoutes
+  ...IncomeReportRoutes,
+  ...BankDetailsRoute,
+  ...AddFundsRoutes,
+  ...TaskRoutes
 ]
 
 export { DefaultRoute, TemplateTitle, Routes }

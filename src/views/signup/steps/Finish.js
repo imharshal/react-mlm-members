@@ -66,7 +66,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
             .get(api.routes.get.member_list)
             .then(response => {
                 // console.log(response.data.data.length)
-                response.data.data.push({ id: 0, username: "admin", fullname: "Avinash Shete" })
+                response.data.data.push({ id: 0, username: "admin", fullname: "Kavyansh Kumar" })
                 // if (response.data.data.length === 0) setLeadList([{ username: "admin", fullname: "Avinash Shete" }])
                 // console.log(response.data.data)
                 setLeadList(response.data.data)
@@ -158,9 +158,9 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
 
                 }).catch(error => {
                     console.log(error)
-                    // handleError()
+                    handleError()
                 })
-        } catch (e) { handleError() }
+        } catch (e) { console.log(e) }
         // resetData()
     }
 
@@ -240,9 +240,9 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                                             key={i}
                                             onMouseEnter={() => onSuggestionItemHover(filteredData.indexOf(suggestion))}
                                             onClick={e => {
-                                                console.log(e.target)
+                                                // console.log(e.target.getAttribute('aria-level'))
                                                 onSuggestionItemClick(null, e)
-                                                setLead({ id: e.target.ariaLevel, lead: e.target.ariaSelected, name: e.target.ariaLabel })
+                                                setLead({ id: e.target.getAttribute('aria-level'), lead: e.target.getAttribute('aria-selected'), name: e.target.getAttribute('aria-label') })
                                             }}
                                             aria-selected={suggestion.username}
                                             aria-label={suggestion.fullname}

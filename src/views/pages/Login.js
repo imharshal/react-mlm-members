@@ -66,6 +66,20 @@ const ErrorToast = () => (
   </Fragment>
 )
 
+const NetworkErrorToast = () => (
+  <Fragment>
+    <div className='toastify-header'>
+      <div className='title-wrapper'>
+        <Avatar size='sm' color='danger' icon={<AlertCircle size={12} />} />
+        <h6 className='toast-title font-weight-bold'>Network issue</h6>
+      </div>
+    </div>
+    <div className='toastify-body'>
+      <span>Please check your network connection</span>
+    </div>
+  </Fragment>
+)
+
 const LoginSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
   password: yup.string().required("Password is required")
@@ -123,9 +137,10 @@ const Login = props => {
           }
         })
         .catch(err => {
-          // Swal.fire('Login failed!', 'Invalid username or password', 'error')
+          Swal.fire('Network issue', 'Kindly check your network connection', 'error')
           // toast.danger(<ErrorToast />, { transition: Slide, hideProgressBar: true, autoClose: 3000 })
-          console.log(err)
+          // console.log(err)
+          // < NetworkErrorToast />
         })
     }
   }
@@ -254,7 +269,7 @@ const Login = props => {
                 <span>Create an account</span>
               </Link>
             </p>
-           
+
           </Col>
         </Col>
       </Row>

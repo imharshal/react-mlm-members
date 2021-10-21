@@ -66,28 +66,7 @@ const UserInfoCard = ({ selectedUser }) => {
               </div>
             </div>
           </Col>
-          <Col xl='5' lg='12' className='mt-2 mt-xl-0'>
-            <div className='d-flex align-items-center user-total-numbers'>
-              <div className='d-flex align-items-center mr-2'>
-                <div className='color-box bg-light-primary'>
-                  <DollarSign className='text-primary' />
-                </div>
-                <div className='ml-1'>
-                  <h5 className='mb-0'>23.3k</h5>
-                  <small>Monthly Sales</small>
-                </div>
-              </div>
-              <div className='d-flex align-items-center'>
-                <div className='color-box bg-light-success'>
-                  <TrendingUp className='text-success' />
-                </div>
-                <div className='ml-1'>
-                  <h5 className='mb-0'>$99.87K</h5>
-                  <small>Annual Profit</small>
-                </div>
-              </div>
-            </div>
-          </Col>
+          
         </Row>
         <Row>
           <Col xl='6' lg='12'>

@@ -5,10 +5,27 @@ import { lazy } from 'react'
 const IncomeReportRoutes = [
     //authentication routes
     {
-        path: '/income-reports',
+        path: '/level-income',
+        component: lazy(() => import('../../views/DefaultPage'))
+        // component: lazy(() => import('../../views/income-reports/income-report'))
+    },
+    {
+        path: '/direct-income',
+        component: lazy(() => import('../../views/DefaultPage'))
+        // component: lazy(() => import('../../views/income-reports/income-report'))
+    },
+    {
+        path: '/daily-income',
+        component: lazy(() => import('../../views/DefaultPage'))
+        // component: lazy(() => import('../../views/income-reports/income-report'))
+    },
+    {
+        path: '/reward-income',
         component: lazy(() => import('../../views/DefaultPage'))
         // component: lazy(() => import('../../views/income-reports/income-report'))
     }
+
+
     // {
     //     path: '/plans/active',
     //     component: lazy(() => import('../../views/plans/ActivePlans'))

@@ -1,5 +1,6 @@
-import { Mail, Home, Settings, LogOut, Edit3, Send, DownloadCloud, DollarSign, Users, Slack, User, Eye, Activity, PlayCircle, Layers, Monitor, Trello, DivideSquare, BookOpen } from 'react-feather'
+import { Mail, Home, Settings, LogOut, Edit3, Send, DownloadCloud, DollarSign, Users, Slack, User, Eye, Activity, PlayCircle, Layers, Monitor, Trello, DivideSquare, BookOpen, FilePlus, Download } from 'react-feather'
 import { Treemap } from 'recharts'
+
 
 export default [
   {
@@ -14,6 +15,7 @@ export default [
     icon: <User size={20} />,
     navLink: '/profile'
   },
+
   {
     id: 'myteam',
     title: 'My Team',
@@ -56,13 +58,45 @@ export default [
 
   },
   {
+    id: 'bank-details',
+    title: 'Bank Details',
+    icon: <FilePlus size={20} />,
+    navLink: '/bank-details'
+  },
+  {
+    id: 'funds',
+    title: 'Add Funds',
+    icon: <Download size={20} />,
+    children: [
+      {
+        id: 'addFunds',
+        title: 'Add Funds',
+        icon: <PlayCircle size={20} />,
+        navLink: '/add-funds'
+      },
+      {
+        id: 'availFunds',
+        title: 'Available funds',
+        icon: <PlayCircle size={20} />,
+        navLink: '/funds'
+      },
+      {
+        id: 'fundHistory',
+        title: 'Funds History',
+        icon: <PlayCircle size={20} />,
+        navLink: '/funds-history'
+      }
+    ]
+
+  },
+  {
     id: 'withdraw',
     title: 'Withdraw',
     icon: <DollarSign size={20} />,
     children: [
       {
         id: 'withdrawFunds',
-        title: 'Withdraw Funds',
+        title: 'IMPS Withdraw',
         icon: <PlayCircle size={20} />,
         navLink: '/withdraw-funds'
       },
@@ -79,14 +113,48 @@ export default [
     id: 'income-reports',
     title: 'Income Reports',
     icon: <Trello size={20} />,
-    navLink: '/income-reports'
+    children: [
+      {
+        id: 'daily-income',
+        title: 'Daily Income',
+        icon: <PlayCircle size={20} />,
+        navLink: '/daily-income'
+      },
+      {
+        id: 'level-income',
+        title: 'Level Income',
+        icon: <PlayCircle size={20} />,
+        navLink: '/level-income'
+      },
+      {
+        id: 'direct-income',
+        title: 'Direct Income',
+        icon: <PlayCircle size={20} />,
+        navLink: '/direct-income'
+      },
+      {
+        id: 'reward-income',
+        title: 'Reward Income',
+        icon: <PlayCircle size={20} />,
+        navLink: '/reward-income'
+      }
+    ]
   },
+
+  {
+    id: 'task-details',
+    title: 'Tasks',
+    icon: <Monitor size={20} />,
+    navLink: '/tasks'
+  },
+
   {
     id: 'update-password',
     title: 'Update Password',
     icon: <Edit3 size={20} />,
     navLink: '/update-password'
   },
+
   {
     id: 'logout',
     title: 'Logout',
