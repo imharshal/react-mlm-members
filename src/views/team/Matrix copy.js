@@ -19,9 +19,6 @@ const Matrix = () => {
     axios
       .get('http://nested-set.test/api/trees')
       .then(response => {
-        console.log(response.data.shops)
-        console.log(response.data.shops.flat())
-
         setMatrix(response.data.shops)
       })
   }, [])

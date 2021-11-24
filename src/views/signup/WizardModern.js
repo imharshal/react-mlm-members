@@ -28,25 +28,25 @@ const WizardModern = () => {
   const steps = [
     {
       id: 'personal-info',
-      title: 'Personal',
+      title: 'Personal Details',
       // subtitle: 'Enter Your Account Details.',
       icon: <FileText size={18} />,
       content: <PersonalInfo updateData={updateData} resetData={resetData} Data={Data} stepper={stepper} type='wizard-modern' />
     },
-    {
-      id: 'step-address',
-      title: 'Address',
-      // subtitle: 'Add Address',
-      icon: <MapPin size={18} />,
-      content: <Address updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
-    },
-    {
-      id: 'nominee-info',
-      title: 'Nominee',
-      // subtitle: 'Add Personal Info',
-      icon: <User size={18} />,
-      content: <NomineeInfo updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
-    },
+    // {
+    //   id: 'step-address',
+    //   title: 'Address',
+    //   // subtitle: 'Add Address',
+    //   icon: <MapPin size={18} />,
+    //   content: <Address updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
+    // },
+    // {
+    //   id: 'nominee-info',
+    //   title: 'Nominee',
+    //   // subtitle: 'Add Personal Info',
+    //   icon: <User size={18} />,
+    //   content: <NomineeInfo updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
+    // },
 
     {
       id: 'final-step',
@@ -60,25 +60,25 @@ const WizardModern = () => {
   const stepsReferrer = [
     {
       id: 'personal-info',
-      title: 'Personal',
+      title: 'Personal Details',
       // subtitle: 'Enter Your Account Details.',
       icon: <FileText size={18} />,
       content: <PersonalInfo updateData={updateData} resetData={resetData} Data={Data} stepper={stepper} type='wizard-modern' />
     },
-    {
-      id: 'step-address',
-      title: 'Address',
-      // subtitle: 'Add Address',
-      icon: <MapPin size={18} />,
-      content: <Address updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
-    },
-    {
-      id: 'nominee-info',
-      title: 'Nominee',
-      // subtitle: 'Add Personal Info',
-      icon: <User size={18} />,
-      content: <NomineeInfo updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
-    },
+    // {
+    //   id: 'step-address',
+    //   title: 'Address',
+    //   // subtitle: 'Add Address',
+    //   icon: <MapPin size={18} />,
+    //   content: <Address updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
+    // },
+    // {
+    //   id: 'nominee-info',
+    //   title: 'Nominee',
+    //   // subtitle: 'Add Personal Info',
+    //   icon: <User size={18} />,
+    //   content: <NomineeInfo updateData={updateData} Data={Data} stepper={stepper} type='wizard-modern' />
+    // },
 
     {
       id: 'final-step',
@@ -94,12 +94,12 @@ const WizardModern = () => {
       <Wizard
         type='modern-horizontal'
         ref={ref}
-        steps={(username) ? stepsReferrer : steps }
-      updataData={dt => setData(dt)}
-      options={{
-        linear: false
-      }}
-      instance={el => setStepper(el)}
+        steps={(username) ? stepsReferrer : steps}
+        updataData={dt => setData(dt)}
+        options={{
+          linear: true
+        }}
+        instance={el => setStepper(el)}
       />
     </div>
   )

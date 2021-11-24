@@ -30,8 +30,8 @@ const SidebarRoutes = [
   //   component: lazy(() => import('../../views/DefaultPage'))
   // },
   {
-    path: '/update-password',
-    component: lazy(() => import('../../views/DefaultPage'))
+    path: '/change-password',
+    component: lazy(() => import('../../views/pages/ChangePassword'))
   },
   {
     path: '/logout',

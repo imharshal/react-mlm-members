@@ -1,5 +1,5 @@
 // ** React Imports
-import { Suspense, useContext, lazy } from 'react'
+import { Suspense, useContext, lazy, useEffect } from 'react'
 
 // ** Utils
 import { isUserLoggedIn } from '@utils'

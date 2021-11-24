@@ -9,10 +9,11 @@ import {
 } from "reactstrap"
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import api from '@configs/apiConfig'
+import api, { getUserId } from '@configs/apiConfig'
 
 import genealoogy from "@src/assets/css/genealogy.css"
 import { User } from "react-feather"
+import DetailsCard from "./DetailsCard"
 // import MembersTree from "../ui-elements/MembersTree"
 // import TreeNode from "../ui-elements/TreeNode"
 const MembersTree = (props) => {
@@ -36,20 +37,21 @@ const MembersTree = (props) => {
   )
 }
 
+
 const Matrix = () => {
   const [Matrix, setMatrix] = useState([])
   const [Loading, setLoading] = useState(true)
   useEffect(() => {
     if (!Matrix.length) axios
-      .get(api.routes.get.tree)
+      .get(`${api.routes.get.tree}/${getUserId()}`, api.auth)
       .then(response => {
-        console.log(response.data.tree)
+        // console.log(response.data.tree)
         // response.data.shops.foreach(e => console.log(e))
         setLoading(false)
         setMatrix([response.data.tree])
         // console.log(Matrix[0])
-      }, [])
-  })
+      })
+  }, [])
 
   return (
     <Card className="container">

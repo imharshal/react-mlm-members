@@ -27,8 +27,10 @@ const SignupSchema = yup.object().shape({
     // confirmPassword: yup.object().required().oneOf([yup.ref(password), null], 'Passwords must match')
 
     password: yup.string()
+        .min(6, "Minimum 6 characters required")
         .required('Password is required'),
     confirmPassword: yup.string()
+        .min(6, "Minimum 6 characters required")
         .required('Enter password again')
         .oneOf([yup.ref('password'), null], "Password does't match")
 })
@@ -86,7 +88,7 @@ const FinishReferral = ({ updateData, username, Data, resetData, stepper, type }
             .get(api.routes.get.member_list)
             .then(response => {
                 // console.log(response.data.data.length)
-                response.data.data.push({ id: 0, username: "admin", fullname: "Kavyansh Kumar" })
+                // response.data.data.push({ id: 0, username: "admin", fullname: "Cashmind" })
                 // if (response.data.data.length === 0) setLeadList([{ username: "admin", fullname: "Avinash Shete" }])
                 setLeadList(response.data.data)
                 response.data.data.filter(x => {
@@ -174,13 +176,13 @@ const FinishReferral = ({ updateData, username, Data, resetData, stepper, type }
             // console.log(Data)
             await axios.post(api.routes.post.signup, Data)
                 .then(response => {
-                    console.log(response.data.error)
+                    // console.log(response.data.error)
                     if (response.data.success === true) handleSuccess()
                     else if (response.data.error) handleError(response.data.error || null)
                     // else handleError(null)
 
                 }).catch(error => {
-                    console.log(error)
+                    // console.log(error)
                     handleError()
                 })
         } catch (e) { console.log(e) }
@@ -249,7 +251,7 @@ const FinishReferral = ({ updateData, username, Data, resetData, stepper, type }
                         <Label className='form-label' for={`username-${type}`}>
                             Create your cashmind user id
                         </Label>
-                     
+
                         <Controller
                             name="username"
                             control={control}
@@ -335,7 +337,7 @@ const FinishReferral = ({ updateData, username, Data, resetData, stepper, type }
                         <ArrowLeft size={14} className='align-middle mr-sm-25 mr-0'></ArrowLeft>
                         <span className='align-middle d-sm-inline-block d-none'>Previous</span>
                     </Button.Ripple>
-                   
+
                     <Button.Ripple type='submit' color='primary' className='btn-next'>
                         <span className='align-middle d-sm-inline-block d-none'>Submit</span>
                         <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>

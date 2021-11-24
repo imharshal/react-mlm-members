@@ -1,5 +1,6 @@
-import { useContext, useState } from 'react'
-import { List, Award, Info } from 'react-feather'
+// import { render } from 'node-sass'
+import { useContext, useState, useEffect } from 'react'
+import { List, Award, Info, Users, Download, Upload, DollarSign } from 'react-feather'
 import { kFormatter } from '@utils'
 import Avatar from '@components/avatar'
 import Timeline from '@components/timeline'
@@ -12,105 +13,42 @@ import Sales from '@src/views/ui-elements/cards/analytics/Sales'
 import AvgSessions from '@src/views/ui-elements/cards/analytics/AvgSessions'
 import CardAppDesign from '@src/views/ui-elements/cards/advance/CardAppDesign'
 import SupportTracker from '@src/views/ui-elements/cards/analytics/SupportTracker'
-import { Row, Col, Button, Card, CardHeader, CardTitle, CardBody, Media, CardText, Alert, Label, Input } from 'reactstrap'
+import { Row, Col, Button, Card, CardHeader, CardTitle, CardBody, Media, CardText, Alert, Label, Input, Table } from 'reactstrap'
 import OrdersReceived from '@src/views/ui-elements/cards/statistics/OrdersReceived'
 import CardCongratulations from '@src/views/ui-elements/cards/advance/CardCongratulations'
 import StatsWithLineChart from '@components/widgets/stats/StatsWithLineChart'
-
 import SubscribersGained from '@src/views/ui-elements/cards/statistics/SubscribersGained'
 import MembersJoined from '@src/views/ui-elements/cards/analytics/MembersJoined'
-
+import FundWallet from './FundWallet'
+import MainWallet from './MainWallet'
 import '@styles/react/libs/charts/apex-charts.scss'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import StatsWithAreaChart from '@components/widgets/stats/StatsWithAreaChart'
+
+import axios from 'axios'
+import api, { updateProfile, getUserId } from '../../configs/apiConfig'
+import StatsCard from './StatsCard'
+
+const IncomeTable = (props) => {
+  return (
+    <tr>{
+      props.Levels.map((level, key) => {
+        <>
+          {/* {console.log(props.Levels)} */}
+          {console.log(key, props.Levels[level].active)}
+          <td className="font-weight-bold">{key}</td>
+          <td className="font-weight-bold text-success">{level.active}</td>
+          <td className="font-weight-bold text-danger">{level.inactive}</td>
+          <td className="font-weight-bold text-success">{level.income}</td>
+          <td className="font-weight-bold text-success">{level.daily_income}</td>
+        </>
+      })}
+    </tr>
+  )
+}
 
 const AnalyticsDashboard = () => {
   const { colors } = useContext(ThemeColors)
-
-  const avatarGroupArr = [
-    {
-      title: 'Billy Hopkins',
-      img: require('@src/assets/images/portrait/small/avatar-s-9.jpg').default,
-      placement: 'bottom',
-      imgHeight: 33,
-      imgWidth: 33
-    },
-    {
-      title: 'Amy Carson',
-      img: require('@src/assets/images/portrait/small/avatar-s-6.jpg').default,
-      placement: 'bottom',
-      imgHeight: 33,
-      imgWidth: 33
-    },
-    {
-      title: 'Brandon Miles',
-      img: require('@src/assets/images/portrait/small/avatar-s-8.jpg').default,
-      placement: 'bottom',
-      imgHeight: 33,
-      imgWidth: 33
-    },
-    {
-      title: 'Daisy Weber',
-      img: require('@src/assets/images/portrait/small/avatar-s-7.jpg').default,
-      placement: 'bottom',
-      imgHeight: 33,
-      imgWidth: 33
-    },
-    {
-      title: 'Jenny Looper',
-      img: require('@src/assets/images/portrait/small/avatar-s-20.jpg').default,
-      placement: 'bottom',
-      imgHeight: 33,
-      imgWidth: 33
-    }
-  ],
-    data = [
-      {
-        title: '12 Invoices have been paid',
-        content: 'Invoices have been paid to the company.',
-        meta: '',
-        metaClassName: 'mr-1',
-        customContent: (
-          <Media>
-            <img className='mr-1' src={jsonImg} alt='data.json' height='23' />
-            <Media className='mb-0' body>
-              data.json
-            </Media>
-          </Media>
-        )
-      },
-      {
-        title: 'Client Meeting',
-        content: 'Project meeting with john @10:15am.',
-        meta: '',
-        metaClassName: 'mr-1',
-        color: 'warning',
-        customContent: (
-          <Media className='align-items-center'>
-            <Avatar img={ceo} />
-            <Media className='ml-50' body>
-              <h6 className='mb-0'>John Doe (Client)</h6>
-              <span>CEO of Infibeam</span>
-            </Media>
-          </Media>
-        )
-      },
-      {
-        title: 'Create a new project for client',
-        content: 'Add files to new design folder',
-        color: 'info',
-        meta: '',
-        metaClassName: 'mr-1',
-        customContent: <AvatarGroup data={avatarGroupArr} />
-      },
-      {
-        title: 'Create a new project for client',
-        content: 'Add files to new design folder',
-        color: 'danger',
-        meta: '',
-        metaClassName: 'mr-1'
-      }
-    ]
-
   const ToastSuccess = () => (
     <Fragment>
       <div className='toastify-header pb-0'>
@@ -124,6 +62,10 @@ const AnalyticsDashboard = () => {
 
   const [value, setValue] = useState('')
   const [copied, setCopied] = useState(false)
+
+  const [UserData, setUserData] = useState([])
+  const [StatsData, setStatsData] = useState([])
+  const [Notifications, setNotifications] = useState([])
   /*eslint-enable */
 
   const handleCopy = ({ target: { value } }) => {
@@ -140,18 +82,53 @@ const AnalyticsDashboard = () => {
     })
   }
 
+  useEffect(() => {
+    axios.get(api.routes.get.notifications)
+      .then(response => setNotifications(response.data.data))
+    setUserData(JSON.parse(localStorage.getItem('userData')))
+  }, [])
+
+  useEffect(() => {
+    axios.get(`${api.routes.get.statistics}/${getUserId()}`, api.auth)
+      .then(response => {
+        setStatsData(response.data)
+      })
+  }, [UserData])
+
+  const [Levels, setLevels] = useState([])
+  const [Total, setTotal] = useState([])
+  // const [Loading, setLoading] = useState(true)
+  useEffect(() => {
+    axios
+      .get(`${api.routes.get.members_in_levels_count}/${getUserId()}`, api.auth)
+      .then(response => {
+        // console.log(response.data.tree)
+        // response.data.shops.foreach(e => console.log(e))
+        // setLoading(false)
+        setLevels([response.data.levels])
+        setTotal(response.data.total)
+        // console.log(response.data.levels)
+      })
+  }, [])
+
+  useEffect(() => {
+    // console.log(Levels)
+  }, [])
 
   return (
-    <div id='dashboard-analytics'>
+    <div id='dashboard-analytics' >
       <Row className='match-height'>
         <Col lg='12' sm='12'>
-          {<Alert color='info'>
+          {Notifications[0] && <Alert color='info'>
             <div className='alert-body'>
 
               <h4 className='text-secondary'> <Info size={20} />{' '} Important Notice / Announcements</h4> <br />
-              { }
               <ul>
-                <li className="ml-2 text-info ">We are launching new services by 20 Oct</li>
+                {Notifications.map((notice, index) => {
+                  return (
+                    <li className="ml-2 text-info " key={index}>{notice.notice}</li>
+                  )
+                })}
               </ul>
             </div>
           </Alert>}
@@ -161,37 +138,210 @@ const AnalyticsDashboard = () => {
       <Row className='match-height'>
         <Col lg='6' sm='12'>
           <CardCongratulations />
-          {/* <Row>
-            <Col xl='3' md='4' sm='6' className='pr-sm-0 mb-md-0 mb-1'>
-              <Input value={value} onChange={handleCopy} />
-            </Col>
-            <Col md='2' sm='12'>
-              <CopyToClipboard onCopy={onCopy} text={value} readonly>
-                <Button.Ripple color='primary' outline>
-                  Copy!
-                </Button.Ripple>
-              </CopyToClipboard>
-            </Col>
-          </Row> */}
         </Col>
         <Col lg='3' sm='6'>
-          {/* <MembersJoined  /> */}
-
-          <SubscribersGained tag="a" kFormatter={kFormatter} onClick={() => history.push('/members')} />
-
+          <FundWallet />
         </Col>
         <Col lg='3' sm='6'>
-          <OrdersReceived kFormatter={kFormatter} warning={colors.warning.main} />
+          <MainWallet />
+          {/* <OrdersReceived kFormatter={kFormatter} warning={colors.warning.main} /> */}
         </Col>
       </Row>
-      <Row className='match-height'>
+      <Row >
+        <Col lg="6" sm="12" className="mr-0 pr-0">
+          <Card>
+            <CardBody>
+              <Table bordered={true} className="table-responsive text-center">
+                <thead>
+                  <tr className="text-center">
+                    <th rowSpan="2">Levels</th>
+                    <th colSpan="2">Members</th>
+                    <th colSpan="2">Level Income</th>
+                  </tr>
+                  <tr>
+                    {/* <td></td> */}
+                    <td className="font-weight-bold text-success">Active</td>
+                    <td className="font-weight-bold text-danger">Inactive</td>
+                    <td className="font-weight-bold text-success">Income</td>
+                    <td className="font-weight-bold text-success">Daily Income</td>
+                  </tr>
+                </thead>
+                {/* console.log(key, obj[key]) */}
+                {Levels.map((Level, LevelKey) => (
+                  <tbody key={LevelKey}>
+                    <tr>
+                      <td className="font-weight-bold">1</td>
+                      <td className="font-weight-bold text-success">{Level.l1.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l1.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l1.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l1.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">2</td>
+                      <td className="font-weight-bold text-success">{Level.l2.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l2.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l2.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l2.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">3</td>
+                      <td className="font-weight-bold text-success">{Level.l3.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l3.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l3.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l3.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">4</td>
+                      <td className="font-weight-bold text-success">{Level.l4.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l4.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l4.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l4.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">5</td>
+                      <td className="font-weight-bold text-success">{Level.l5.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l5.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l5.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l5.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">6</td>
+                      <td className="font-weight-bold text-success">{Level.l6.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l6.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l6.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l6.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">7</td>
+                      <td className="font-weight-bold text-success">{Level.l7.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l7.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l7.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l7.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">8</td>
+                      <td className="font-weight-bold text-success">{Level.l8.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l8.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l8.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l8.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">9</td>
+                      <td className="font-weight-bold text-success">{Level.l9.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l9.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l9.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l9.daily_income}</td>
+                    </tr>
+                    <tr>
+                      <td className="font-weight-bold">10</td>
+                      <td className="font-weight-bold text-success">{Level.l10.active}</td>
+                      <td className="font-weight-bold text-danger">{Level.l10.inactive}</td>
+                      <td className="font-weight-bold text-success">{Level.l10.income}</td>
+                      <td className="font-weight-bold text-success">{Level.l10.daily_income}</td>
+                    </tr>
+
+                  </tbody>
+
+                ))}
+                <tr>
+                  <td className="font-weight-bolder">Total</td>
+                  <td className="font-weight-bolder ">{Total.active}</td>
+                  <td className="font-weight-bolder ">{Total.inactive}</td>
+                  <td className="font-weight-bolder ">{ }</td>
+                  <td className="font-weight-bolder ">{Total.daily_income}</td>
+                </tr>
+              </Table>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col md="6" className="">
+          <Row> 
+            <Col lg='6' sm='12'>
+              {StatsData.DirectLevel &&
+                <StatsCard icon={<Users size={21} />}
+                  kFormatter={kFormatter}
+                  color="primary"
+                  Data={StatsData.DirectLevel}
+                  title="Your Direct Members" />}
+            </Col>
+            <Col lg='6' sm='12'>
+              {StatsData.ActiveLevel &&
+                <StatsCard icon={<Users size={21} />}
+                  kFormatter={kFormatter}
+                  color="primary"
+                  Data={StatsData.ActiveLevel}
+                  title="Active Members" />}
+            </Col>
+            <Col lg='6' sm='12'>
+              {StatsData.TotalIncome &&
+                <StatsCard icon={<DollarSign size={21} />}
+                  kFormatter={kFormatter}
+                  color="primary"
+                  Data={StatsData.TotalIncome}
+                  title="Total Income" />}
+            </Col>
+            <Col lg='6' sm='12'>
+              {StatsData.FundWallet &&
+                <StatsCard icon={<DollarSign size={21} />}
+                  kFormatter={kFormatter}
+                  color="primary"
+                  Data={StatsData.FundWallet}
+                  title="Fund Wallet" />}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg='3' sm='6'>
+          {StatsData.FundWalletDeduction &&
+            <StatsCard icon={<Upload size={21} />}
+              kFormatter={kFormatter}
+              color="primary"
+              Data={StatsData.FundWalletDeduction}
+              title="Fund Wallet Deductions" />}
+        </Col>
+        <Col lg='3' sm='6'>
+          {StatsData.Withdrawal &&
+            <StatsCard icon={<Upload size={21} />}
+              kFormatter={kFormatter}
+              color="primary"
+              Data={StatsData.Withdrawal}
+              title="Fund Withdrawal" />}
+        </Col>
+        <Col lg='3' sm='6'>
+          {StatsData.LevelIncome &&
+            <StatsCard icon={<Download size={21} />}
+              kFormatter={kFormatter}
+              color="primary"
+              Data={StatsData.LevelIncome}
+              title="Level Income" />}
+        </Col>
+        <Col lg='3' sm='6'>
+          {StatsData.DailyIncome &&
+            <StatsCard icon={<Download size={21} />}
+              kFormatter={kFormatter}
+              color="primary"
+              Data={StatsData.DailyIncome}
+              title="Daily Income" />}
+        </Col>
+        <Col lg='3' sm='6'>
+          {StatsData.RewardIncome &&
+            <StatsCard icon={<Download size={21} />}
+              kFormatter={kFormatter}
+              color="primary"
+              Data={StatsData.RewardIncome}
+              title="Reward Income" />}
+        </Col>
+      </Row>
+     
+      {/* <Row className='match-height'>
         <Col lg='6' xs='12'>
           <AvgSessions primary={colors.primary.main} />
         </Col>
         <Col lg='6' xs='12'>
           <SupportTracker primary={colors.primary.main} danger={colors.danger.main} />
         </Col>
-      </Row>
+      </Row> */}
       {/* <Row className='match-height'>
         <Col lg='4' xs='12'>
           <Card className='card-user-timeline'>

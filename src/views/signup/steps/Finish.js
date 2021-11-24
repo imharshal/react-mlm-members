@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import classnames from 'classnames'
 import { ArrowLeft, ArrowRight, CheckCircle, Info, XCircle } from 'react-feather'
 import { selectThemeColors, isObjEmpty } from '@utils'
-import { Label, FormGroup, Row, Col, Button, Form, Input, Alert, FormFeedback } from 'reactstrap'
+import { Label, FormGroup, Row, Col, Button, Form, Input, Alert, FormFeedback, Spinner } from 'reactstrap'
 
 import { useForm, Controller } from 'react-hook-form'
 import * as yup from 'yup'
@@ -27,8 +27,10 @@ const SignupSchema = yup.object().shape({
     // confirmPassword: yup.object().required().oneOf([yup.ref(password), null], 'Passwords must match')
 
     password: yup.string()
+        .min(6, "Minimum 6 characters required")
         .required('Password is required'),
     confirmPassword: yup.string()
+        .min(6, "Minimum 6 characters required")
         .required('Enter password again')
         .oneOf([yup.ref('password'), null], "Password does't match")
 })
@@ -46,12 +48,12 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
 
     const [LeadList, setLeadList] = useState([])
     const [avail, setAvail] = useState([{ taken: true, avail: false, invalid: false }])
-    const [ServerErrors, setServerErrors] = useState([])
+    const [Loading, setLoading] = useState(false)
 
     const handleLeadBlur = () => {
         try {
             const valid = LeadList.filter(x => x.username.toLowerCase() === (Lead.lead.toLowerCase()))
-            console.log(valid)
+            // console.log(valid)
             if (!valid || Lead.name === null) setInvalidLead(true)
             else setInvalidLead(false)
         } catch (e) {
@@ -66,7 +68,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
             .get(api.routes.get.member_list)
             .then(response => {
                 // console.log(response.data.data.length)
-                response.data.data.push({ id: 0, username: "admin", fullname: "Kavyansh Kumar" })
+                // response.data.data.push({ id: 0, username: "admin", fullname: "Cashmind" })
                 // if (response.data.data.length === 0) setLeadList([{ username: "admin", fullname: "Avinash Shete" }])
                 // console.log(response.data.data)
                 setLeadList(response.data.data)
@@ -80,7 +82,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
         if (e.target.value === '') setAvail({ invalid: true })
         else if (selected.length > 0) setAvail({ taken: true })
         else setAvail({ avail: true })
-        console.log(avail)
+        // console.log(avail)
     }
     // const handleChangeUserName = (e) => {
     //     if (e.target.value.match("^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$") !== null) {
@@ -105,7 +107,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
     const handleError = (error) => {
         return MyAlert.fire({
             title: 'Failed to Register',
-            text: null ? 'Please try again' : error.email || error.username,
+            text: null ? 'Please try again' : error.email || error.username || error.limitExceed,
             icon: 'error',
             showCancelButton: true,
             showConfirmButton: true,
@@ -133,7 +135,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
     const handleResubmit = (error) => {
         return MyAlert.fire({
             title: 'Error',
-            text: error.email || error.username,
+            text: error.email || error.username || error.limitExceed,
             icon: 'error',
             confirmButtonText: 'OK',
             customClass: {
@@ -148,16 +150,17 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
     const signup = async () => {
         setFlagSubmitted(FlagSubmitted + 1)
         try {
-            console.log(Data)
+            // console.log(Data)
             await axios.post(api.routes.post.signup, Data)
                 .then(response => {
-                    console.log(response.data.error)
+                    console.log(response)
                     if (response.data.success === true) handleSuccess()
                     else if (response.data.error) handleError(response.data.error || null)
-                    // else handleError(null)
+                    setLoading(false)
 
                 }).catch(error => {
-                    console.log(error)
+                    // console.log(error)
+                    setLoading(false)
                     handleError()
                 })
         } catch (e) { console.log(e) }
@@ -174,6 +177,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
     const onSubmit = (data) => {
         // console.log(data.lead)
         trigger()
+        setLoading(true)
         // if (FlagSubmitted === 0) {
         const random = Math.floor(Math.random() * 6)
         const LoginDetails = {
@@ -184,6 +188,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
             lead_name: Lead.name,
             avatar: random
         }
+        // console.log(LoginDetails)
         //Check if username is available
         if (avail.avail === true) {
             if (isObjEmpty(errors)) {
@@ -222,6 +227,7 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                                     {...field}
                                     id={`lead-${type}`}
                                     suggestions={LeadList}
+                                    suggestionLimit={5}
                                     className={classnames('form-control', { 'is-invalid': InvalidLead })}
                                     filterKey='username'
                                     placeholder="Cashmind username"
@@ -288,6 +294,10 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                     <FormGroup tag={Col} md='12'>
                         <Label className='form-label' for={`username-${type}`}>
                             Create your cashmind user id
+                            <span className='ml-1 text-primary form-control-sm'>
+                                <Info size={15} />{' '}
+                                Required everytime you login
+                            </span>
                         </Label>
                         {/* <Input
                             name="username"
@@ -388,9 +398,15 @@ const FinishStep = ({ updateData, Data, resetData, stepper, type }) => {
                         <span className='align-middle d-sm-inline-block d-none'>Avail</span>
                     </Button.Ripple> */}
                     {/* disabled={Boolean(FlagSubmitted)} */}
-                    <Button.Ripple type='submit' color='primary' className='btn-next'>
-                        <span className='align-middle d-sm-inline-block d-none'>Next</span>
-                        <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
+                    <Button.Ripple type='submit' color='primary' className='btn-next' disabled={Loading}>
+                        {Loading ? <>
+                            <Spinner color='white' size='sm' type='grow' />
+                            <span className='ml-1 align-middle d-sm-inline-block d-none'>Submitting...</span>
+                        </> : <>
+                            <span className='align-middle d-sm-inline-block d-none'>Submit</span>
+                            <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
+                        </>}
+
                     </Button.Ripple>
                 </div>
             </Form>

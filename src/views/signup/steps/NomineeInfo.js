@@ -15,10 +15,7 @@ import 'cleave.js/dist/addons/cleave-phone.in'
 
 const SignupSchema = yup.object().shape({
   name: yup.string().required("Nominee name is required"),
-  relation: yup.object().required("Relation is required").nullable(),
-  mobile: yup.string().required("Mobile no. is required").min(10, 'Enter a valid mobile no.'),
-  aadhar: yup.string().required("Aadhar no. is required")
-
+  relation: yup.object().required("Relation is required").nullable()
 })
 // password: yup.string().required("Password is required"),
 // confirmPassword: yup
@@ -49,9 +46,7 @@ const NomineeInfo = ({ updateData, Data, stepper, type }) => {
     trigger()
     const NomineeData = {
       nominee_name: data.name,
-      nominee_relation: data.relation.value,
-      nominee_mobile: data.mobile,
-      nominee_aadhar: data.aadhar
+      nominee_relation: data.relation.value
     }
     if (isObjEmpty(errors)) {
       updateData(NomineeData)
@@ -65,7 +60,7 @@ const NomineeInfo = ({ updateData, Data, stepper, type }) => {
         <h5 className='mb-0'>Nominee Info</h5>
         <small>Enter Your Nomination Details</small>
       </div>
-      <Form onSubmit={handleSubmit(onSubmit)} className="w-100">
+      <Form onSubmit={handleSubmit(onSubmit)} className="w-100 h-100">
         <Row>
           <FormGroup tag={Col} md='12'>
             <Label className='form-label' for={`first-name-${type}`}>
@@ -83,7 +78,7 @@ const NomineeInfo = ({ updateData, Data, stepper, type }) => {
           </FormGroup>
         </Row>
 
-        <Row>
+        <Row className="mb-5">
           <FormGroup tag={Col} md='6'>
             <Label className='form-label' for={`relation-${type}`}>
               Relation
@@ -100,53 +95,13 @@ const NomineeInfo = ({ updateData, Data, stepper, type }) => {
                   className={classnames({ 'is-invalid': errors['relation'] })}
                   classNamePrefix="select"
                   options={relationOptions}
+                  maxMenuHeight={175}
                 />
               )}
             />
             {errors.relation && <FormFeedback>{errors.relation.message}</FormFeedback>}
           </FormGroup>
         </Row>
-
-        <Row>
-          <FormGroup tag={Col} md='6'>
-            <Label className='form-label' for={`aadhar-${type}`}>
-              Nominee Aadhar no.
-            </Label>
-            <Controller
-              name="aadhar"
-              control={control}
-              render={({ field }) => (
-                <Cleave
-                  className={classnames('form-control', { 'is-invalid': errors['aadhar'] })}
-                  options={{
-                    blocks: [4, 4, 4]
-                  }}
-                  placeholder='Aadhar no.'
-                  {...field}
-                />
-              )}
-            />
-            {errors.aadhar && <FormFeedback>{errors.aadhar.message}</FormFeedback>}
-          </FormGroup>
-
-          <FormGroup tag={Col} md='6'>
-            <Label className='form-label' for={`mobile-${type}`}>
-              Nominee Mobile no.
-            </Label>
-            <Cleave
-              className={classnames('form-control', { 'is-invalid': errors['mobile'] })}
-              options={{
-                blocks: [5, 5]
-              }}
-              name='mobile'
-              id={`nominee-mobile-${type}`}
-              placeholder='Mobile no.'
-              {...register('mobile')}
-            />
-            {errors.mobile && <FormFeedback>{errors.mobile.message}</FormFeedback>}
-          </FormGroup>
-        </Row>
-
         <div className='d-flex justify-content-between'>
           <Button.Ripple color='primary' className='btn-prev' onClick={() => stepper.previous()}>
             <ArrowLeft size={14} className='align-middle mr-sm-25 mr-0'></ArrowLeft>

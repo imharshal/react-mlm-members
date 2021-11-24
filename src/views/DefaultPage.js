@@ -1,12 +1,21 @@
 import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink } from 'reactstrap'
 
-const img =  "@src/assets/images/pages/collaborators.svg"
+const img = "@src/assets/images/pages/collaborators.svg"
 
 const DefaultPage = () => {
   const source = require(`@src/assets/images/pages/collaborators.svg`).default
   return (
     <Card className="container">
+      {/* 
+------------------------------------------------------------------------------
+ */}
+      {/* <!--Start of Tawk.to Script--> */}
 
+
+      {/* <!--End of Tawk.to Script--> */}
+      {/* 
+------------------------------------------------------------------------------
+ */}
       {/* <CardHeader>
         <CardTitle>Create Awesome Team 🙌</CardTitle>
       </CardHeader> */}

@@ -14,7 +14,7 @@ import { SidebarRoutes } from './sidebar'
 import { MyteamRoutes } from './myteam'
 import { BankDetailsRoute } from './bank-details'
 import { AddFundsRoutes } from './funds'
-import { TaskRoutes } from './tasks'
+import { AllServicesRoutes } from './all-services'
 
 // ** Merge Routes
 const Routes = [
@@ -28,6 +28,14 @@ const Routes = [
     }
   },
   {
+    path: '/forgot-password/:token',
+    component: lazy(() => import('../../views/pages/ResetPassword')),
+    layout: 'BlankLayout',
+    meta: {
+      authRoute: true
+    }
+  },
+  {
     path: '/signup',
     component: lazy(() => import('../../views/signup')),
     layout: 'BlankLayout',
@@ -35,6 +43,7 @@ const Routes = [
       authRoute: true
     }
   },
+  
   {
     path: '/ref/:username',
     component: lazy(() => import('../../views/signup')),
@@ -56,7 +65,7 @@ const Routes = [
   ...IncomeReportRoutes,
   ...BankDetailsRoute,
   ...AddFundsRoutes,
-  ...TaskRoutes
+  ...AllServicesRoutes
 ]
 
 export { DefaultRoute, TemplateTitle, Routes }

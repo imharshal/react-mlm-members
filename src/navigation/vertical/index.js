@@ -1,4 +1,4 @@
-import { Mail, Home, Settings, LogOut, Edit3, Send, DownloadCloud, DollarSign, Users, Slack, User, Eye, Activity, PlayCircle, Layers, Monitor, Trello, DivideSquare, BookOpen, FilePlus, Download } from 'react-feather'
+import { Mail, Home, Settings, LogOut, Edit3, Send, DownloadCloud, DollarSign, Users, Slack, User, Eye, Activity, PlayCircle, Layers, Monitor, Trello, DivideSquare, BookOpen, FilePlus, Download, Upload } from 'react-feather'
 import { Treemap } from 'recharts'
 
 
@@ -37,7 +37,7 @@ export default [
   },
   {
     id: 'plans',
-    title: 'My Plans',
+    title: 'Active Plans',
     icon: <Layers size={20} />,
     navLink: '/plans'
 
@@ -64,35 +64,34 @@ export default [
     navLink: '/bank-details'
   },
   {
-    id: 'funds',
+    id: 'availFunds',
+    title: 'Available funds',
+    icon: <DollarSign size={20} />,
+    navLink: '/funds'
+  },
+  
+  {
+    id: 'addFunds',
     title: 'Add Funds',
     icon: <Download size={20} />,
-    children: [
-      {
-        id: 'addFunds',
-        title: 'Add Funds',
-        icon: <PlayCircle size={20} />,
-        navLink: '/add-funds'
-      },
-      {
-        id: 'availFunds',
-        title: 'Available funds',
-        icon: <PlayCircle size={20} />,
-        navLink: '/funds'
-      },
-      {
-        id: 'fundHistory',
-        title: 'Funds History',
-        icon: <PlayCircle size={20} />,
-        navLink: '/funds-history'
-      }
-    ]
-
+    navLink: '/add-funds'
+  },
+  {
+    id: 'transfer-fund',
+    title: 'Fund Transfer',
+    icon: <Send size={20} />,
+    navLink: '/fund-transfer'
+  },
+  {
+    id: 'fundHistory',
+    title: 'Fund Wallet History',
+    icon: <BookOpen size={20} />,
+    navLink: '/funds-history'
   },
   {
     id: 'withdraw',
     title: 'Withdraw',
-    icon: <DollarSign size={20} />,
+    icon: <Upload size={20} />,
     children: [
       {
         id: 'withdrawFunds',
@@ -142,17 +141,48 @@ export default [
   },
 
   {
-    id: 'task-details',
-    title: 'Tasks',
+    id: 'all-services',
+    title: 'All Services',
     icon: <Monitor size={20} />,
-    navLink: '/tasks'
+    children: [
+      {
+        id: 'mobile-recharge',
+        title: 'Mobile Recharge',
+        icon: <PlayCircle size={20} />,
+        navLink: '/mobile-recharge'
+      },
+      {
+        id: 'dth-recharge',
+        title: 'DTH Recharge',
+        icon: <PlayCircle size={20} />,
+        navLink: '/dth-recharge'
+      },
+      {
+        id: 'bill-pay',
+        title: 'Bill Pay',
+        icon: <PlayCircle size={20} />,
+        navLink: '/bill-pay'
+      },
+      {
+        id: 'insurance',
+        title: 'Insurance 2W/4W',
+        icon: <PlayCircle size={20} />,
+        navLink: '/insurance'
+      },
+      {
+        id: 'pancard',
+        title: 'New Pancard',
+        icon: <PlayCircle size={20} />,
+        navLink: '/new-pancard'
+      }
+    ]
   },
 
   {
-    id: 'update-password',
-    title: 'Update Password',
+    id: 'change-password',
+    title: 'Change Password',
     icon: <Edit3 size={20} />,
-    navLink: '/update-password'
+    navLink: '/change-password'
   },
 
   {

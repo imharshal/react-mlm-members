@@ -3,11 +3,11 @@ import { Card, CardHeader, CardBody, Badge, UncontrolledTooltip, Button } from '
 
 const ActivePlanCard = ({ plan }) => {
   return (
-    <Card className='col-md-4 border-primary'>
-      <CardHeader className='d-flex justify-content-between align-items-center pt-75 pb-1'>
-        <h5 className='mb-0'>Current Plan</h5>
-        <Badge id='plan-expiry-date' color='light-secondary'>
-          July 22, {new Date().getFullYear()}
+    <Card className='col-md-4 bg-primary text-white'>
+      <CardHeader className=' d-flex justify-content-between align-items-center pt-75 pb-1'>
+        <h4 className='mb-0 text-white font-weight-bold'>Current Plan</h4>
+        <Badge id='plan-expiry-date' color='light-primary' className="bg-white">
+          Valid till: {plan.validity}
         </Badge>
         <UncontrolledTooltip placement='top' target='plan-expiry-date'>
           Expiry Date
@@ -20,16 +20,16 @@ const ActivePlanCard = ({ plan }) => {
         </Badge> */}
         <ul className='list-unstyled my-1'>
           <li>
-            <span className='h4 align-middle font-weight-bold'>Rs. 1000</span>
+            <span className='h4 align-middle font-weight-bold text-white'> Rs {plan.price}</span>
           </li>
           <li className='my-25'>
-            <span className='align-middle'><strong>Joining:</strong> June 21, 2021</span>
+            <span className='align-middle'><strong>Joining:</strong> {plan.joining}</span>
           </li>
           <li className='my-25'>
-            <span className='align-middle'><strong>Daily Income:</strong> 25 Rs/Day</span>
+            <span className='align-middle'><strong>Daily Income:</strong> {plan.daily_income} Rs/Day</span>
           </li>
           <li>
-            <span className='align-middle'><strong>Withdraw Limit:</strong>Rs 500</span>
+            <span className='align-middle'><strong>Withdraw Limit:</strong> Rs {plan.withdraw_limit}</span>
           </li>
         </ul>
         {/* <Button.Ripple className='text-center' color='primary' block>

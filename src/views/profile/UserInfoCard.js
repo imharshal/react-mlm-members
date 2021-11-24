@@ -66,10 +66,10 @@ const UserInfoCard = ({ selectedUser }) => {
               </div>
             </div>
           </Col>
-          
+
         </Row>
         <Row>
-          <Col xl='6' lg='12'>
+          <Col xl='8' lg='12'>
             <div className=' ml-md-3 user-info-wrapper user-total-numbers'>
               <h4 className="text-primary">Personal Details</h4><br />
               <div className='pt-0 d-flex flex-wrap align-items-center'>
@@ -92,18 +92,6 @@ const UserInfoCard = ({ selectedUser }) => {
                   </CardText>
                 </div>
                 <CardText className='mb-0'>{selectedUser !== null && selectedUser.fullname}</CardText>
-              </div>
-
-              <div className='d-flex flex-wrap align-items-center my-50'>
-                <div className='user-info-title'>
-                  <Check className='mr-1' size={14} />
-                  <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
-                    Status
-                  </CardText>
-                </div>
-                <CardText className='text-capitalize mb-0'>
-                  {(selectedUser !== null && selectedUser.status) ? 'Active' : 'Inactive'}
-                </CardText>
               </div>
 
               <div className='d-flex flex-wrap align-items-center my-50'>
@@ -135,12 +123,11 @@ const UserInfoCard = ({ selectedUser }) => {
               </div>
             </div>
           </Col>
-          <Col xl='6' lg='12'>
+          {/* <Col xl='6' lg='12'>
             <div className=' ml-md-3 user-info-wrapper user-total-numbers'>
               <h4 className="text-primary">Address Details</h4><br />
               <div className='pt-0 d-flex flex-wrap align-items-center'>
                 <div className='user-info-title'>
-                  {/* <User className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     Address
                   </CardText>
@@ -153,7 +140,6 @@ const UserInfoCard = ({ selectedUser }) => {
               {(selectedUser !== null && selectedUser.town) &&
                 <div className='d-flex flex-wrap align-items-center my-50'>
                   <div className='user-info-title'>
-                    {/* <Share2 className='mr-1' size={14} /> */}
                     <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                       Town
                     </CardText>
@@ -163,7 +149,6 @@ const UserInfoCard = ({ selectedUser }) => {
 
               <div className='d-flex flex-wrap align-items-center my-50'>
                 <div className='user-info-title'>
-                  {/* <Info className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     City
                   </CardText>
@@ -173,7 +158,6 @@ const UserInfoCard = ({ selectedUser }) => {
 
               <div className='d-flex flex-wrap align-items-center my-50'>
                 <div className='user-info-title'>
-                  {/* <Info className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     District
                   </CardText>
@@ -183,17 +167,15 @@ const UserInfoCard = ({ selectedUser }) => {
 
               <div className='d-flex flex-wrap align-items-center my-50'>
                 <div className='user-info-title'>
-                  {/* <PhoneIncoming className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     State
                   </CardText>
                 </div>
                 <CardText className='mb-0'>{selectedUser !== null && selectedUser.state}</CardText>
               </div>
-
-              <div className='d-flex flex-wrap align-items-center my-50'>
+ */}
+          {/* <div className='d-flex flex-wrap align-items-center my-50'>
                 <div className='user-info-title'>
-                  {/* <PhoneIncoming className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     Country
                   </CardText>
@@ -202,7 +184,6 @@ const UserInfoCard = ({ selectedUser }) => {
               </div>
               <div className='d-flex flex-wrap align-items-center my-50'>
                 <div className='user-info-title'>
-                  {/* <PhoneIncoming className='mr-1' size={14} /> */}
                   <CardText tag='span' className='user-info-title font-weight-bold mb-0'>
                     Pincode
                   </CardText>
@@ -258,7 +239,7 @@ const UserInfoCard = ({ selectedUser }) => {
               </div>
 
             </div>
-          </Col>
+          </Col> */}
 
         </Row>
       </CardBody>

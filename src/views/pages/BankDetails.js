@@ -13,14 +13,18 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.in'
 import InputMask from 'react-input-mask'
-
+import axios from 'axios'
+import api, { getUserId } from '../../configs/apiConfig'
+import withReactContent from 'sweetalert2-react-content'
+import Swal from 'sweetalert2'
 
 //Preserve From state
+const MyAlert = withReactContent(Swal)
 
 const SignupSchema = yup.object().shape({
 
     acholder: yup.string().required("Account holder name is required"),
-    bankName: yup.string().required("Bank name is required"),
+    bank_name: yup.string().required("Bank name is required"),
     acno: yup.string().required("Account no. is required"),
     ifsc: yup.string().required("IFSC no. is required")
 })
@@ -30,12 +34,12 @@ const SignupSchema = yup.object().shape({
 //   .required()
 //   .oneOf([yup.ref(password), null], 'Passwords must match')
 
-const bank = {
-    acholder: "Harshal Bokade",
-    bank_name: "SBI",
-    acno:"123456789",
-    ifsc: "SBI00420"
-}
+// const bank = {
+//     acholder: "Harshal Bokade",
+//     bank_name: "SBI",
+//     acno: "123456789",
+//     ifsc: "SBI00420"
+// }
 
 const PersonalInfo = ({ type = 'bank' }) => {
 
@@ -43,11 +47,53 @@ const PersonalInfo = ({ type = 'bank' }) => {
         mode: "onBlur",
         resolver: yupResolver(SignupSchema)
     })
+    const [UserData, setUserData] = useState([])
+    const [NotUpdated, setNotUpdated] = useState(false)
+    const [BankAccount, setBankAccount] = useState([])
 
+    useEffect(() => {
+        setUserData(JSON.parse(localStorage.getItem('userData')))
+    }, [])
 
+    const handleUpdateRequest = () => {
+        MyAlert.fire({
+            title: 'You have successfully updated the bank account',
+            text: '',
+            icon: 'success',
+            // confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        }).then(() => location.reload())
+    }
+
+    useEffect(() => {
+        try {
+            axios
+                .get(`${api.routes.get.bank_account}/${getUserId()}`, api.auth)
+                .then(response => setBankAccount(response.data.data))
+                .catch(error => {
+                    MyAlert.fire('Kindly update your bank account for hassle free payouts', '', 'info')
+                })
+        } catch (e) {
+            MyAlert.fire('Invalid Request', 'Kindly relogin to fix this issue', 'error')
+        }
+        // (response.data.user)
+        // setUser(selectedUser)
+    }, [])
     const onSubmit = (data) => {
         trigger()
-        console.log(data)
+        const Data = {
+            member_id: UserData['id'],
+            ...data
+        }
+        // console.log(Data)
+        axios
+            .post(api.routes.post.bank_account, Data, api.auth)
+            .then(response => {
+                handleUpdateRequest()
+            })
     }
 
     return (
@@ -69,7 +115,7 @@ const PersonalInfo = ({ type = 'bank' }) => {
                                     type='text'
                                     name='acholder'
                                     id={`account-holder-${type}`}
-                                    value={bank && bank.acholder}
+                                    value={BankAccount && BankAccount.acholder}
                                     placeholder='Ac holder name'
                                     {...register('acholder')}
                                     className={classnames({ 'is-invalid': errors['acholder'] })}
@@ -84,15 +130,15 @@ const PersonalInfo = ({ type = 'bank' }) => {
                                 </Label>
                                 <Input
                                     type='text'
-                                    name='bankName'
-                                    value={bank && bank.bank_name}
+                                    name='bank_name'
+                                    value={BankAccount && BankAccount.bank_name}
 
                                     id={`bank-name-${type}`}
                                     placeholder='Bank name'
-                                    {...register('bankName')}
-                                    className={classnames({ 'is-invalid': errors['bankName'] })}
+                                    {...register('bank_name')}
+                                    className={classnames({ 'is-invalid': errors['bank_name'] })}
                                 />
-                                {errors.bankName && <FormFeedback>{errors.bankName.message}</FormFeedback>}
+                                {errors.bank_name && <FormFeedback>{errors.bank_name.message}</FormFeedback>}
                             </FormGroup>
                         </Row>
                         <Row>
@@ -103,7 +149,7 @@ const PersonalInfo = ({ type = 'bank' }) => {
                                 <Input
                                     type='number'
                                     name='acno'
-                                    value={bank && bank.acno}
+                                    value={BankAccount && BankAccount.acno}
                                     id={`account-number-${type}`}
                                     placeholder='Account no.'
                                     {...register('acno')}
@@ -120,7 +166,7 @@ const PersonalInfo = ({ type = 'bank' }) => {
                                 <Input
                                     type='text'
                                     name='ifsc'
-                                    value={bank && bank.ifsc}
+                                    value={BankAccount && BankAccount.ifsc}
                                     id={`account-ifsc-${type}`}
                                     placeholder='IFSC'
                                     {...register('ifsc')}
@@ -130,7 +176,7 @@ const PersonalInfo = ({ type = 'bank' }) => {
                             </FormGroup>
                         </Row>
 
-                        {bank && !bank.acno && <div className='d-flex justify-content-left'>
+                        {BankAccount && !BankAccount.acno && <div className='d-flex justify-content-left'>
                             <Button.Ripple type='submit' color='primary' className='btn-next'>
                                 <span className='align-middle d-sm-inline-block d-none'>Submit</span>
                                 <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>

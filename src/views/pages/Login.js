@@ -34,8 +34,8 @@ import {
 } from 'reactstrap'
 
 import Swal from 'sweetalert2'
-
-
+import api from '../../configs/apiConfig'
+import axios from 'axios'
 import '@styles/base/pages/page-auth.scss'
 
 const ToastContent = ({ name, role }) => (
@@ -82,7 +82,7 @@ const NetworkErrorToast = () => (
 
 const LoginSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
-  password: yup.string().required("Password is required")
+  password: yup.string().min(6, "Minimum 6 characters required").required("Password is required")
 })
 
 const Login = props => {
@@ -111,6 +111,51 @@ const Login = props => {
   //   console.log(password)
   // }, [])
 
+  const handleForgotPassword = () => {
+    Swal.fire({
+      title: 'Enter your registered email',
+      icon: 'info',
+      input: 'email',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      confirmButtonText: 'Reset Password',
+      showCancelButton: true,
+      showLoaderOnConfirm: true,
+      customClass: {
+        confirmButton: 'btn btn-primary ',
+        cancelButton: 'ml-sm-1 btn btn-danger'
+      },
+      preConfirm: (email) => {
+        return axios.get(`${api.routes.get.password_reset_link}/${email}`)
+          .then(response => {
+            // console.log(response)
+            if (!response.data.success) {
+              Swal.showValidationMessage(
+                `Request failed: ${response.data.message}`
+              )
+              // throw new Error(response.data.message)
+            }
+            Swal.fire('Password reset accepted!', 'Kindly check your inbox for password reset link', 'success')
+          })
+          .catch(error => {
+            console.log(error)
+            Swal.showValidationMessage(
+              `Email not registered with us`
+            )
+          })
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `${result.value.login}'s avatar`,
+          imageUrl: result.value.avatar_url
+        })
+      }
+    })
+  }
+
   const onSubmit = data => {
     trigger()
     setLoading(true)
@@ -119,11 +164,12 @@ const Login = props => {
         .login({ username: data.username, password: data.password })
         .then(res => {
           setLoading(false)
-          console.log(res)
-          if (!res.data.success) Swal.fire('Login failed!', 'Invalid username or password', 'error')
+          // console.log(res)
+          if (res.data.blocked) Swal.fire('Please Complete your KYC', 'Kindly contact us for more details', 'error')
+          else if (!res.data.success) Swal.fire('Login failed!', 'Invalid username or password', 'error')
           else {
             const data = { ...res.data[0].user, accessToken: res.data[0].token, refreshToken: res.data.refreshToken }
-            console.log(res.data)
+            // console.log(res.data)
             dispatch(handleLogin(data))
             // data.push({ role: "admin" })
             // ability.update({ action: "manage", subject: "all" })
@@ -137,6 +183,9 @@ const Login = props => {
           }
         })
         .catch(err => {
+          // console.log(err)
+          // if (err.data.blocked) Swal.fire('You are blocked by cashmind', 'Kindly contact us for more details', 'error')
+          // else Swal.fire('Network issue', 'Kindly check your network connection', 'error')
           Swal.fire('Network issue', 'Kindly check your network connection', 'error')
           // toast.danger(<ErrorToast />, { transition: Slide, hideProgressBar: true, autoClose: 3000 })
           // console.log(err)
@@ -236,7 +285,7 @@ const Login = props => {
                   <Label className='form-label' for='login-password'>
                     Password
                   </Label>
-                  <Link to='/forgot-password'>
+                  <Link to='#' onClick={handleForgotPassword}>
                     <small>Forgot Password?</small>
                   </Link>
                 </div>

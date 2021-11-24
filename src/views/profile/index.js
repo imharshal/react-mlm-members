@@ -50,9 +50,7 @@ const UserView = props => {
     // (response.data.user)
     // setUser(selectedUser)
   }, [])
-  useEffect(() => {
-    console.log(user)
-  }, [user])
+
   return (
     <div className='app-user-view'>
       <Row>

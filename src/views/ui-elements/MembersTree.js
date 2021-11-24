@@ -11,7 +11,7 @@ function MembersTree(props) {
         axios
             .get('http://nested-set.test/api/trees')
             .then(response => {
-                console.log(response.data.shops[0])
+                // console.log(response.data.shops[0])
                 // response.data.shops.foreach(e => console.log(e))
 
                 setMatrix(response.data[0])
